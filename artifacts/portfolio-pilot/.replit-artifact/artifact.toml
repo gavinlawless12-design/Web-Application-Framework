@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "PortfolioPilot"
+version = "1.0.0"
+id = "artifacts/portfolio-pilot"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24687
+
+[services.development]
+run = "pnpm --filter @workspace/portfolio-pilot run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/portfolio-pilot", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/portfolio-pilot/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24687"
+BASE_PATH = "/"

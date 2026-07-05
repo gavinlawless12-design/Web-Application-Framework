@@ -3,20 +3,35 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: PortfolioPilot API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: profile
+    description: Investor profile
+  - name: recommendations
+    description: Stock recommendations
+  - name: portfolio
+    description: Portfolio builder
+  - name: stocks
+    description: Stock search and detail
+  - name: watchlist
+    description: Watchlists
+  - name: screener
+    description: Stock screeners
+  - name: ai
+    description: AI assistant
+  - name: market
+    description: Market overview
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +39,415 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get investor profile
+      responses:
+        "200":
+          description: Investor profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvestorProfile"
+        "404":
+          description: No profile yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: upsertProfile
+      tags: [profile]
+      summary: Create or update investor profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvestorProfileInput"
+      responses:
+        "200":
+          description: Saved profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvestorProfile"
+
+  /recommendations:
+    get:
+      operationId: getRecommendations
+      tags: [recommendations]
+      summary: Get personalized stock recommendations based on investor profile
+      responses:
+        "200":
+          description: List of recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StockRecommendation"
+
+  /recommendations/summary:
+    get:
+      operationId: getRecommendationSummary
+      tags: [recommendations]
+      summary: Get recommendation summary stats
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecommendationSummary"
+
+  /portfolio:
+    get:
+      operationId: getPortfolio
+      tags: [portfolio]
+      summary: Get saved portfolio
+      responses:
+        "200":
+          description: Portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+        "404":
+          description: No portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: savePortfolio
+      tags: [portfolio]
+      summary: Save portfolio
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioInput"
+      responses:
+        "200":
+          description: Saved portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+
+  /portfolio/build:
+    post:
+      operationId: buildPortfolio
+      tags: [portfolio]
+      summary: Build an optimized portfolio based on user parameters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PortfolioBuildInput"
+      responses:
+        "200":
+          description: Built portfolio proposal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioProposal"
+
+  /portfolio/health:
+    get:
+      operationId: getPortfolioHealth
+      tags: [portfolio]
+      summary: Get portfolio health score and analysis
+      responses:
+        "200":
+          description: Health analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioHealth"
+
+  /stocks/search:
+    get:
+      operationId: searchStocks
+      tags: [stocks]
+      summary: Search stocks by ticker or company name
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StockSearchResult"
+
+  /stocks/{ticker}:
+    get:
+      operationId: getStock
+      tags: [stocks]
+      summary: Get full stock detail
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Stock detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /stocks/{ticker}/score:
+    get:
+      operationId: getStockScore
+      tags: [stocks]
+      summary: Get PortfolioPilot score for a stock
+      parameters:
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Score
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockScore"
+
+  /watchlists:
+    get:
+      operationId: getWatchlists
+      tags: [watchlist]
+      summary: Get all watchlists
+      responses:
+        "200":
+          description: Watchlists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Watchlist"
+    post:
+      operationId: createWatchlist
+      tags: [watchlist]
+      summary: Create a watchlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchlistInput"
+      responses:
+        "201":
+          description: Created watchlist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Watchlist"
+
+  /watchlists/{id}:
+    delete:
+      operationId: deleteWatchlist
+      tags: [watchlist]
+      summary: Delete a watchlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /watchlists/{id}/items:
+    post:
+      operationId: addToWatchlist
+      tags: [watchlist]
+      summary: Add a stock to a watchlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WatchlistItemInput"
+      responses:
+        "201":
+          description: Added item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WatchlistItem"
+
+  /watchlists/{id}/items/{ticker}:
+    delete:
+      operationId: removeFromWatchlist
+      tags: [watchlist]
+      summary: Remove a stock from a watchlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: ticker
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /screener:
+    post:
+      operationId: runScreener
+      tags: [screener]
+      summary: Run a stock screener with filters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScreenerInput"
+      responses:
+        "200":
+          description: Screener results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScreenerResult"
+
+  /screener/presets:
+    get:
+      operationId: getScreenerPresets
+      tags: [screener]
+      summary: Get list of screener presets
+      responses:
+        "200":
+          description: Presets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScreenerPreset"
+
+  /ai/chat:
+    post:
+      operationId: aiChat
+      tags: [ai]
+      summary: Ask the AI investment assistant a question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AIChatInput"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AIChatResponse"
+
+  /ai/messages:
+    get:
+      operationId: getChatHistory
+      tags: [ai]
+      summary: Get recent AI chat messages
+      responses:
+        "200":
+          description: Chat messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+
+  /market/overview:
+    get:
+      operationId: getMarketOverview
+      tags: [market]
+      summary: Get market overview with indexes and fear/greed
+      responses:
+        "200":
+          description: Market overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketOverview"
+
+  /market/trending:
+    get:
+      operationId: getTrendingStocks
+      tags: [market]
+      summary: Get trending, top gainers, and top losers
+      responses:
+        "200":
+          description: Trending stocks
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendingStocks"
+
+  /market/news:
+    get:
+      operationId: getMarketNews
+      tags: [market]
+      summary: Get recent market news
+      responses:
+        "200":
+          description: News articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NewsArticle"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +455,704 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required: [success]
+
+    InvestorProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        goal:
+          type: string
+        horizon:
+          type: string
+        riskTolerance:
+          type: string
+        dividendPreference:
+          type: string
+        internationalExposure:
+          type: boolean
+        smallCapPreference:
+          type: boolean
+        sectors:
+          type: array
+          items:
+            type: string
+        esgPreference:
+          type: boolean
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, userId, goal, horizon, riskTolerance, dividendPreference, internationalExposure, smallCapPreference, sectors, esgPreference, createdAt, updatedAt]
+
+    InvestorProfileInput:
+      type: object
+      properties:
+        goal:
+          type: string
+        horizon:
+          type: string
+        riskTolerance:
+          type: string
+        dividendPreference:
+          type: string
+        internationalExposure:
+          type: boolean
+        smallCapPreference:
+          type: boolean
+        sectors:
+          type: array
+          items:
+            type: string
+        esgPreference:
+          type: boolean
+      required: [goal, horizon, riskTolerance, dividendPreference, internationalExposure, smallCapPreference, sectors, esgPreference]
+
+    StockRecommendation:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company:
+          type: string
+        sector:
+          type: string
+        score:
+          type: number
+        price:
+          type: number
+        marketCap:
+          type: string
+        peRatio:
+          type: ["number", "null"]
+        forwardPE:
+          type: ["number", "null"]
+        dividendYield:
+          type: ["number", "null"]
+        revenueGrowth:
+          type: number
+        epsGrowth:
+          type: number
+        roe:
+          type: number
+        operatingMargin:
+          type: number
+        beta:
+          type: number
+        scoreBreakdown:
+          type: object
+          properties:
+            valuation:
+              type: number
+            growth:
+              type: number
+            profitability:
+              type: number
+            momentum:
+              type: number
+            dividendSafety:
+              type: number
+          required: [valuation, growth, profitability, momentum, dividendSafety]
+        aiExplanation:
+          type: string
+        pros:
+          type: array
+          items:
+            type: string
+        cons:
+          type: array
+          items:
+            type: string
+        change1d:
+          type: number
+        change1dPct:
+          type: number
+      required: [ticker, company, sector, score, price, marketCap, revenueGrowth, epsGrowth, roe, operatingMargin, beta, scoreBreakdown, aiExplanation, pros, cons, change1d, change1dPct]
+
+    RecommendationSummary:
+      type: object
+      properties:
+        totalRecommendations:
+          type: integer
+        avgScore:
+          type: number
+        topSector:
+          type: string
+        avgDividendYield:
+          type: number
+        avgBeta:
+          type: number
+        profileGoal:
+          type: string
+      required: [totalRecommendations, avgScore, topSector, avgDividendYield, avgBeta, profileGoal]
+
+    Portfolio:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        name:
+          type: string
+        investmentAmount:
+          type: number
+        monthlyContribution:
+          type: number
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allocation"
+        metrics:
+          $ref: "#/components/schemas/PortfolioMetrics"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required: [id, userId, name, investmentAmount, monthlyContribution, allocations, metrics, createdAt, updatedAt]
+
+    PortfolioInput:
+      type: object
+      properties:
+        name:
+          type: string
+        investmentAmount:
+          type: number
+        monthlyContribution:
+          type: number
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allocation"
+        metrics:
+          $ref: "#/components/schemas/PortfolioMetrics"
+      required: [name, investmentAmount, monthlyContribution, allocations, metrics]
+
+    PortfolioBuildInput:
+      type: object
+      properties:
+        desiredReturn:
+          type: number
+        maxVolatility:
+          type: number
+        investmentAmount:
+          type: number
+        monthlyContribution:
+          type: number
+        riskLevel:
+          type: string
+      required: [desiredReturn, maxVolatility, investmentAmount, monthlyContribution, riskLevel]
+
+    PortfolioProposal:
+      type: object
+      properties:
+        allocations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Allocation"
+        metrics:
+          $ref: "#/components/schemas/PortfolioMetrics"
+        rationale:
+          type: string
+      required: [allocations, metrics, rationale]
+
+    Allocation:
+      type: object
+      properties:
+        label:
+          type: string
+        percentage:
+          type: number
+        tickers:
+          type: array
+          items:
+            type: string
+        color:
+          type: string
+      required: [label, percentage, tickers, color]
+
+    PortfolioMetrics:
+      type: object
+      properties:
+        expectedAnnualReturn:
+          type: number
+        expectedVolatility:
+          type: number
+        diversificationScore:
+          type: number
+        dividendYield:
+          type: number
+        expenseRatio:
+          type: number
+        sharpeRatio:
+          type: number
+      required: [expectedAnnualReturn, expectedVolatility, diversificationScore, dividendYield, expenseRatio, sharpeRatio]
+
+    PortfolioHealth:
+      type: object
+      properties:
+        overallScore:
+          type: number
+        grade:
+          type: string
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthCategory"
+        suggestions:
+          type: array
+          items:
+            type: string
+      required: [overallScore, grade, categories, suggestions]
+
+    HealthCategory:
+      type: object
+      properties:
+        name:
+          type: string
+        score:
+          type: number
+        description:
+          type: string
+      required: [name, score, description]
+
+    StockSearchResult:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company:
+          type: string
+        exchange:
+          type: string
+        sector:
+          type: string
+        price:
+          type: number
+        change1dPct:
+          type: number
+      required: [ticker, company, exchange, sector, price, change1dPct]
+
+    StockDetail:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company:
+          type: string
+        exchange:
+          type: string
+        sector:
+          type: string
+        industry:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        change1d:
+          type: number
+        change1dPct:
+          type: number
+        marketCap:
+          type: string
+        peRatio:
+          type: ["number", "null"]
+        forwardPE:
+          type: ["number", "null"]
+        pbRatio:
+          type: ["number", "null"]
+        psRatio:
+          type: ["number", "null"]
+        pegRatio:
+          type: ["number", "null"]
+        dividendYield:
+          type: ["number", "null"]
+        dividendGrowth5y:
+          type: ["number", "null"]
+        revenueGrowth:
+          type: number
+        epsGrowth:
+          type: number
+        roe:
+          type: number
+        operatingMargin:
+          type: number
+        freeCashFlow:
+          type: string
+        beta:
+          type: number
+        volume:
+          type: string
+        avgVolume:
+          type: string
+        week52High:
+          type: number
+        week52Low:
+          type: number
+        analystRating:
+          type: string
+        targetPrice:
+          type: ["number", "null"]
+        institutionalOwnership:
+          type: number
+        insiderOwnership:
+          type: number
+        priceHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/PricePoint"
+        revenueHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/FinancialPoint"
+        epsHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/FinancialPoint"
+        dividendHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/FinancialPoint"
+        aiSummary:
+          type: string
+        swot:
+          $ref: "#/components/schemas/SWOT"
+        competitors:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockSearchResult"
+        news:
+          type: array
+          items:
+            $ref: "#/components/schemas/NewsArticle"
+        score:
+          type: number
+      required: [ticker, company, exchange, sector, industry, description, price, change1d, change1dPct, marketCap, revenueGrowth, epsGrowth, roe, operatingMargin, freeCashFlow, beta, volume, avgVolume, week52High, week52Low, analystRating, institutionalOwnership, insiderOwnership, priceHistory, revenueHistory, epsHistory, dividendHistory, aiSummary, swot, competitors, news, score]
+
+    PricePoint:
+      type: object
+      properties:
+        date:
+          type: string
+        price:
+          type: number
+      required: [date, price]
+
+    FinancialPoint:
+      type: object
+      properties:
+        period:
+          type: string
+        value:
+          type: number
+      required: [period, value]
+
+    SWOT:
+      type: object
+      properties:
+        strengths:
+          type: array
+          items:
+            type: string
+        weaknesses:
+          type: array
+          items:
+            type: string
+        opportunities:
+          type: array
+          items:
+            type: string
+        threats:
+          type: array
+          items:
+            type: string
+      required: [strengths, weaknesses, opportunities, threats]
+
+    StockScore:
+      type: object
+      properties:
+        ticker:
+          type: string
+        score:
+          type: number
+        breakdown:
+          type: object
+          properties:
+            valuation:
+              type: number
+            growth:
+              type: number
+            profitability:
+              type: number
+            momentum:
+              type: number
+            dividendSafety:
+              type: number
+            debtLevel:
+              type: number
+          required: [valuation, growth, profitability, momentum, dividendSafety, debtLevel]
+        explanation:
+          type: string
+      required: [ticker, score, breakdown, explanation]
+
+    Watchlist:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: string
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WatchlistItem"
+        createdAt:
+          type: string
+      required: [id, userId, name, items, createdAt]
+
+    WatchlistInput:
+      type: object
+      properties:
+        name:
+          type: string
+      required: [name]
+
+    WatchlistItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        watchlistId:
+          type: integer
+        ticker:
+          type: string
+        company:
+          type: string
+        price:
+          type: number
+        change1dPct:
+          type: number
+        score:
+          type: number
+        addedAt:
+          type: string
+      required: [id, watchlistId, ticker, company, price, change1dPct, score, addedAt]
+
+    WatchlistItemInput:
+      type: object
+      properties:
+        ticker:
+          type: string
+      required: [ticker]
+
+    ScreenerInput:
+      type: object
+      properties:
+        preset:
+          type: ["string", "null"]
+        filters:
+          $ref: "#/components/schemas/ScreenerFilters"
+        sortBy:
+          type: string
+        sortOrder:
+          type: string
+        limit:
+          type: integer
+      required: [filters]
+
+    ScreenerFilters:
+      type: object
+      properties:
+        minScore:
+          type: ["number", "null"]
+        maxScore:
+          type: ["number", "null"]
+        minPE:
+          type: ["number", "null"]
+        maxPE:
+          type: ["number", "null"]
+        minDividendYield:
+          type: ["number", "null"]
+        maxDividendYield:
+          type: ["number", "null"]
+        minRevenueGrowth:
+          type: ["number", "null"]
+        maxBeta:
+          type: ["number", "null"]
+        minROE:
+          type: ["number", "null"]
+        minOperatingMargin:
+          type: ["number", "null"]
+        sectors:
+          type: ["array", "null"]
+          items:
+            type: string
+        marketCapSize:
+          type: ["string", "null"]
+
+    ScreenerResult:
+      type: object
+      properties:
+        ticker:
+          type: string
+        company:
+          type: string
+        sector:
+          type: string
+        score:
+          type: number
+        price:
+          type: number
+        change1dPct:
+          type: number
+        peRatio:
+          type: ["number", "null"]
+        dividendYield:
+          type: ["number", "null"]
+        revenueGrowth:
+          type: number
+        roe:
+          type: number
+        beta:
+          type: number
+        marketCap:
+          type: string
+      required: [ticker, company, sector, score, price, change1dPct, revenueGrowth, roe, beta, marketCap]
+
+    ScreenerPreset:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        filters:
+          $ref: "#/components/schemas/ScreenerFilters"
+      required: [id, name, description, filters]
+
+    AIChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+        sessionId:
+          type: ["string", "null"]
+      required: [message]
+
+    AIChatResponse:
+      type: object
+      properties:
+        messageId:
+          type: integer
+        response:
+          type: string
+        sessionId:
+          type: string
+      required: [messageId, response, sessionId]
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+        sessionId:
+          type: string
+      required: [id, role, content, createdAt, sessionId]
+
+    MarketOverview:
+      type: object
+      properties:
+        fearGreedIndex:
+          type: number
+        fearGreedLabel:
+          type: string
+        indexes:
+          type: array
+          items:
+            $ref: "#/components/schemas/IndexQuote"
+        lastUpdated:
+          type: string
+      required: [fearGreedIndex, fearGreedLabel, indexes, lastUpdated]
+
+    IndexQuote:
+      type: object
+      properties:
+        name:
+          type: string
+        ticker:
+          type: string
+        value:
+          type: number
+        change1d:
+          type: number
+        change1dPct:
+          type: number
+      required: [name, ticker, value, change1d, change1dPct]
+
+    TrendingStocks:
+      type: object
+      properties:
+        trending:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockSearchResult"
+        topGainers:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockSearchResult"
+        topLosers:
+          type: array
+          items:
+            $ref: "#/components/schemas/StockSearchResult"
+      required: [trending, topGainers, topLosers]
+
+    NewsArticle:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        source:
+          type: string
+        url:
+          type: string
+        publishedAt:
+          type: string
+        sentiment:
+          type: ["string", "null"]
+        tickers:
+          type: array
+          items:
+            type: string
+      required: [id, title, summary, source, url, publishedAt, tickers]

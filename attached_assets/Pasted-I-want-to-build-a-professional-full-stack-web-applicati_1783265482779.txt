@@ -1,0 +1,524 @@
+I want to build a professional full-stack web application called "PortfolioPilot" that serves as an AI-powered investment research and portfolio recommendation platform.
+
+The goal is NOT to predict stock prices.
+
+The goal is to help investors build better long-term portfolios based on their investing style.
+
+The website should look modern, premium, and similar to Bloomberg Terminal meets Apple.
+
+Use:
+- React
+- TypeScript
+- Tailwind CSS
+- Node.js backend
+- Express
+- PostgreSQL (or Supabase)
+- Chart.js or Recharts
+- Alpha Vantage, Finnhub, Polygon.io, or Yahoo Finance APIs
+- OpenAI API only for natural-language explanations (never for stock selection)
+
+---------------------------------
+
+Landing Page
+
+Create a clean landing page with:
+
+Hero section
+
+"Build Your Best Portfolio."
+
+Subheading:
+
+Get personalized investment recommendations using financial fundamentals, valuation metrics, dividend analysis, momentum, risk scoring, and AI-powered explanations.
+
+Buttons:
+
+Get Started
+
+See Demo
+
+Feature cards
+
+Personalized Recommendations
+
+Portfolio Builder
+
+Dividend Analysis
+
+Growth Screener
+
+Value Screener
+
+Risk Analyzer
+
+Watchlists
+
+AI Insights
+
+Professional dark mode design.
+
+---------------------------------
+
+Dashboard
+
+After login users arrive at a dashboard.
+
+Left sidebar
+
+Dashboard
+
+Discover
+
+Portfolio Builder
+
+Screeners
+
+Watchlist
+
+AI Analysis
+
+Settings
+
+Main dashboard cards:
+
+Market Overview
+
+Major Indexes
+
+Trending Stocks
+
+Top Gainers
+
+Top Losers
+
+Market Fear & Greed indicator
+
+Recent News
+
+Portfolio Performance
+
+---------------------------------
+
+Step 1: Investor Profile
+
+Ask users questions before recommendations.
+
+Investment Goal
+
+Growth
+
+Income
+
+Dividend Growth
+
+Value Investing
+
+Balanced
+
+Aggressive Growth
+
+Long-Term Wealth
+
+Retirement
+
+Investment Horizon
+
+1-3 years
+
+3-5 years
+
+5-10 years
+
+10+ years
+
+Risk Tolerance
+
+Very Conservative
+
+Conservative
+
+Moderate
+
+High
+
+Very High
+
+Dividend Preference
+
+No Dividends
+
+Some Dividends
+
+High Yield
+
+Maximum Yield
+
+International Exposure
+
+Yes
+
+No
+
+Small Cap Preference
+
+Yes
+
+No
+
+Sector preferences
+
+Technology
+
+Healthcare
+
+Energy
+
+Financials
+
+Industrials
+
+Consumer
+
+Utilities
+
+REITs
+
+Emerging Markets
+
+ESG Preference
+
+Optional
+
+---------------------------------
+
+Portfolio Recommendation Engine
+
+Generate personalized recommendations based on:
+
+Risk score
+
+Valuation
+
+Growth
+
+Profitability
+
+Debt
+
+Momentum
+
+Dividend safety
+
+Analyst ratings
+
+Revenue growth
+
+EPS growth
+
+Free cash flow
+
+Return on Equity
+
+Operating Margin
+
+PEG ratio
+
+Forward PE
+
+Price to Sales
+
+Beta
+
+Volatility
+
+Market Cap
+
+Insider buying
+
+Institutional ownership
+
+Economic environment
+
+Interest rates
+
+Diversification score
+
+Give every stock a PortfolioPilot Score from 0-100.
+
+Explain WHY every recommendation received that score.
+
+Example:
+
+Microsoft
+
+PortfolioPilot Score: 94
+
+Excellent profitability
+
+Strong earnings growth
+
+High ROE
+
+Reasonable valuation
+
+Strong balance sheet
+
+AI Explanation
+
+Microsoft fits your aggressive long-term growth strategy because...
+
+---------------------------------
+
+Portfolio Builder
+
+Users can choose:
+
+Desired return
+
+Maximum volatility
+
+Investment amount
+
+Monthly contributions
+
+Risk level
+
+The application builds an optimized diversified portfolio.
+
+Example
+
+30% Large Cap Growth
+
+20% International
+
+15% Dividend
+
+10% Small Cap
+
+10% Healthcare
+
+10% Cash
+
+5% REITs
+
+Display charts.
+
+Expected annual return
+
+Expected volatility
+
+Diversification score
+
+Dividend yield
+
+Expense ratio
+
+---------------------------------
+
+Advanced Screeners
+
+Growth Screener
+
+Value Screener
+
+Dividend Screener
+
+High Quality Screener
+
+Momentum Screener
+
+Small Cap Screener
+
+AI Screener
+
+Allow users to filter by every important financial metric.
+
+---------------------------------
+
+Stock Detail Page
+
+Search any stock.
+
+Display
+
+Price chart
+
+Revenue growth
+
+EPS
+
+Balance sheet
+
+Cash Flow
+
+Income Statement
+
+Dividend history
+
+Analyst estimates
+
+Valuation
+
+News
+
+Institutional ownership
+
+Insider transactions
+
+Competitors
+
+AI summary
+
+SWOT analysis
+
+Investment thesis
+
+Risks
+
+Potential upside
+
+Potential downside
+
+---------------------------------
+
+AI Assistant
+
+Create an AI investment assistant that answers questions like
+
+"Why is Apple rated 88?"
+
+"What are the biggest risks of Nvidia?"
+
+"Compare Costco vs Walmart."
+
+"Why isn't Tesla recommended?"
+
+The AI should explain using financial data only.
+
+Never make unsupported predictions.
+
+---------------------------------
+
+Portfolio Health Score
+
+Analyze the user's portfolio.
+
+Grade
+
+Diversification
+
+Risk
+
+Sector concentration
+
+Dividend quality
+
+Valuation
+
+Growth
+
+Income
+
+Volatility
+
+Give suggestions like
+
+"You own too much technology."
+
+"Your portfolio has little international exposure."
+
+"Your dividend income is low."
+
+---------------------------------
+
+Watchlists
+
+Allow users to save stocks.
+
+Notify users when
+
+Valuation becomes attractive.
+
+Dividend increases.
+
+Earnings released.
+
+PortfolioPilot Score changes.
+
+---------------------------------
+
+Visualizations
+
+Beautiful charts.
+
+Allocation pie charts
+
+Performance graphs
+
+Risk-return scatter plots
+
+Sector allocation
+
+Dividend growth
+
+Historical performance
+
+---------------------------------
+
+Future Features
+
+Backtesting
+
+Monte Carlo simulations
+
+Factor investing
+
+Tax-loss harvesting suggestions
+
+ETF comparison
+
+Mutual fund analyzer
+
+Economic dashboard
+
+Inflation tracker
+
+Interest rate tracker
+
+Insider buying tracker
+
+---------------------------------
+
+Code Requirements
+
+Write clean reusable components.
+
+Use modern React architecture.
+
+Strong TypeScript types.
+
+Responsive mobile design.
+
+Professional animations.
+
+Loading skeletons.
+
+Dark mode.
+
+Error handling.
+
+Modular backend.
+
+Proper comments.
+
+API abstraction layer.
+
+Authentication.
+
+Database schema.
+
+---------------------------------
+
+IMPORTANT
+
+The recommendations should be based on objective financial metrics and user preferences—not promises of future performance. Include appropriate investment disclaimers and explain the reasoning behind every recommendation.

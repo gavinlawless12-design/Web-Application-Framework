@@ -6,6 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface IndexQuote {
+  name: string;
+  ticker: string;
+  value: number;
+  change1d: number;
+  change1dPct: number;
 }
